@@ -1,0 +1,87 @@
+<%- include("header",{type:'my'}) %>
+<div class="container">
+	<% if(posts.length > 0 ){  %>
+		<ul class="posts">
+			<% posts.forEach(function(res){ %>
+				<li>
+					<div class="author">
+						<span title="<%= res.name %>"><a href="/posts?author=<%= res.name %> "> <%= res.name %></a></span>
+						<span><i class="far fa-comment-alt"></i> <%= res.comments %></span>
+						<span><i class="fas fa-eye"></i> <%= res.pv %></span>
+					</div>
+					<div class="comment_pv">
+						<span><%= res.moment %></span>
+					</div>
+					<a href="/posts/<%= res.id %>">
+						<div class="title">
+							<img class="userAvator" src="images/<%= res.avator %>"  alt="avator">
+							<%- res.title %>
+						</div>
+						<div class="content markdown">
+							<%- res.content %>
+						</div>
+					</a>
+				</li>
+			<% }) %>
+		</ul>
+	<% }else{  %>
+		<p class="tips">No post at the moment，Go ahead and publish it</p>
+	<% } %>
+	<div style="margin-top: 30px" class="pagination" id="page"></div>
+</div>
+<script src="/pagination.js"></script>
+<script>
+	pagination({
+			selector: '#page',
+				totalPage: <%= postsPageLength %>,
+				currentPage: 1,
+				prev: 'Next',
+				next: 'Next',
+				first: true,
+				last: true,
+				showTotalPage: true,
+				count: 2//
+		},function(val){
+				$.ajax({
+						url: "posts/self/page",
+						type: 'POST',
+						data:{
+								page: val,
+								name: location.search.slice(1).split('=')[1]
+							},
+						cache: false,
+						success: function (msg) {
+								if (msg != 'error') {
+										$('.posts').html(' ')
+										$.each(msg,function(i,val){
+												$('.posts').append(
+														'<li>'+
+														'<div class=\"author\">'+
+														'<span title=\"'+ val.name +'\"><a href=\"/posts?author='+ val.name +' \"> '+ val.name +'</a></span>'+
+														'<span><i class="far fa-comment-alt"></i> '+ val.comments +'</span>'+
+														'<span><i class="fas fa-eye"></i> '+ val.pv +'</span>'+
+														'</div>'+
+														'<div class=\"comment_pv\">'+
+														'<span>'+ val.moment +'</span>'+
+														'</div>'+
+														'<a href=\"/posts/'+ val.id +'\">'+
+														'<div class=\"title\">'+
+														'<img class="userAvator" src="images/' + val.avator + '" alt=\"avator\">' +
+														val.title +
+														'</div>'+
+														'<div class=\"content\">'+
+														val.content +
+														'</div>'+
+														'</a>'+
+														'</li>'
+													)
+											})
+									}else{
+											alert('Pagination does not exists')
+										}
+							}
+					})
+
+			})
+</script>
+<% include footer %>

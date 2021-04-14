@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Gungim Blog</title>
+		<link rel="icon" href="https://avatars.githubusercontent.com/u/50023960?s=60&v=4">
+		<link rel="stylesheet" href="/index.css">
+		<script src="https://unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
+		<script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+
+		
+		<script>
+			function fade(txt){
+							$('.message').text(txt)
+							$('.message').animate({
+											top:0
+										})
+							setTimeout(function(){
+											$('.message').animate({
+															top: '-100%'
+														})
+										},1500)
+						}
+						$(function(){
+										$('.signout').click(function(){
+														$.ajax({
+																		url: "/signout",
+																		type: "GET",
+																		cache: false,
+																		dataType: 'json',
+																		success: function (msg) {
+																						if (msg) {
+																										fade('Sign out successfully')
+																										setTimeout(function(){
+																														location.href = "/posts"
+																													},1500)
+																									}
+																					},
+																		error: function () {
+																						alert('Error');
+																					}
+																	})
+													})
+									})
+		</script>
+	</head>
+	<body>
+		<header>
+			<div class="header-container">
+				<div class="user_name">
+					<% if(session.user){ %>
+						<%= session.user %>
+				<% } %>
+				<% if(!session.user){ %>
+					Welcome to register and login^_^
+				<% } %>
+				</div>
+				<div class="message">login successful</div>
+				<div class="user_right">
+					<%  if(session.user){ %>
+						<div class="has_user">
+							<a target="__blank" href="https://github.com/0326865837">GitHub</a>
+							<% if(type == 'all'){ %>
+								<a class="active" href="/posts">All posts</a>
+							<% }else{ %>
+								<a href="/posts">All posts</a>
+							<% }%>
+							<% if(type == 'my'){ %>
+								<a class="active" href="/posts?author=<%= session.user %>">My post</a>
+							<% }else{ %>
+								<a href="/posts?author=<%= session.user %>">My Post</a>
+							<% }%>
+							<% if(type == 'create'){ %>
+								<a class="active" href="/create">publish an post</a>
+							<% }else{ %>
+								<a href="/create">publish an post</a>
+							<% }%>
+
+							<span class="signout">Sign out</span>
+						</div>
+					<% } %>
+					<% if(!session.user){ %>
+						<div class="none_user has_user">
+							<a target="__blank" href="https://github.com/0326865837">GitHub</a>
+							<% if(type == 'all'){ %>
+								<a class="active" href="/posts">All posts</a>
+							<% }else{ %>
+								<a href="/posts">All post</a>
+							<% }%>
+							<% if(type == 'signup'){ %>
+								<a class="active" href="/signup">Sign up</a>
+							<% }else{ %>
+								<a href="/signup">Sign up</a>
+							<% }%>
+							<% if(type == 'signin'){ %>
+								<a class="active" href="/signin">Signin</a>
+							<% }else{ %>
+								<a href="/signin">Signin</a>
+							<% }%>
+						</div>
+					<% } %>
+				</div>
+			</div>
+		</header>
